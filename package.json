@@ -1,5 +1,8 @@
 {
   "scripts": {
     "start": "npx http-server -o -p 8081"
+  },
+  "dependencies": {
+    "typescript": "^5.2.2"
   }
 }
