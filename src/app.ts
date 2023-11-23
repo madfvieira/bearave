@@ -8,10 +8,19 @@ import { Floor } from './floor.class.js';
 import { Room } from './room.class.js';
 import { Bear } from './bear.class.js';
 import { Level } from './level.class.js';
+import { MessageEvent } from './message.event.class.js';
+import { DelayEvent } from './delay.event.class.js';
 import { DialogueEvent } from './dialogue.event.class.js';
-import { DecisionEvent } from './decision.event.class.js';
+import { PromptEvent } from './prompt.event.class.js';
+import { ClearAreaEvent } from './clearArea.event.class.js';
+import { Dialogue } from './dialogue.class.js';
 
 const initialize = () => {
+    const appElem = document.getElementById('app');
+    if (!appElem) {
+        return false;
+    }
+
     const floor1 = new Floor(
         {
             'id': 1,
@@ -37,56 +46,53 @@ const initialize = () => {
     const level1 = new Level({
         'id': 1,
         'floor': floor1,
+        'htmlAnchor': appElem,
     });
 
     level1.setRoomEvents({
-        'roomId': '1_3',
+        'roomId': '2_4',
         'events': [
             new DialogueEvent({
-                'message' : "Hello there Bear",
+                'dialogs': [
+                    new Dialogue({
+                        'message': "Cave is starting to flood!",
+                        'entity': "Cave",
+                        'duration': 1000,
+                    }),
+                ],
             }),
-            new DialogueEvent({
-                'message' : "This is a perilous cave you've wandered into",
+            new DelayEvent({ 'duration': 600, 'onDone' : () => { alert('hi')}}),
+            new PromptEvent({
+                'question': "A devilious creature emerges from the dark...",
+                'choices': [
+                    { id: "choice_0", label: "Attack", onPick: () => { console.log('you have picked me')}},
+                    { id: "choice_1", label: "Retreat", onPick: () => {}},
+                ],
             }),
-            new DialogueEvent({
+            new MessageEvent({
                 'message' : "Mind the puddles!",
+                'duration': 3600,
             }),
+            new ClearAreaEvent(),
         ],
     });
 
-    level1.setRoomEvents({
-        'roomId': 'c',
-        'events': [
-            new DecisionEvent({
-                'choice' : "Onward a stenchy smell oozes in the air.  To the right, the sound of water droplets.",
-                'options' : [
-                    'Go onwards',
-                    'Go right',
-                ]
-            }),
-        ],
-    });
-
-    const appElem = document.getElementById('app');
-    if (appElem) {
-        level1.setHtmlAnchor(appElem);
-        level1.placeBear('1_4');
-        level1.renderLevel();
-        document.onkeydown = (event) => {
-            if (event.keyCode == 38) { // up arrow
-                level1.moveBear('up');
-            }
-            else if (event.keyCode == 40) { // down arrow
-                level1.moveBear('down');
-            }
-            else if (event.keyCode == 37) { // left arrow
-                level1.moveBear('left');
-            }
-            else if (event.keyCode == 39) { // right arrow
-                level1.moveBear('right');
-            }
-        };
-    }
+    level1.placeBear('1_4');
+    level1.renderLevel();
+    document.onkeydown = (event) => {
+        if (event.keyCode == 38) { // up arrow
+            level1.moveBear('up');
+        }
+        else if (event.keyCode == 40) { // down arrow
+            level1.moveBear('down');
+        }
+        else if (event.keyCode == 37) { // left arrow
+            level1.moveBear('left');
+        }
+        else if (event.keyCode == 39) { // right arrow
+            level1.moveBear('right');
+        }
+    };
 };
 
 initialize();

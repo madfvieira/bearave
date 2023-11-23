@@ -3,18 +3,20 @@ import LevelType from './level.type';
 import { Floor } from './floor.class.js';
 import { Room } from './room.class.js';
 import { Event } from './event.class.js';
-import InterfaceLevelPosition from './levelPosition.interface';
+import { EventQueue } from './eventQueue.class.js';
 import RoomAdjacentPositions from './roomAdjacentPositions.interface';
 
 export class Level {
     private id: LevelType["id"];
     private floor: LevelType["floor"];
     private htmlAnchor: LevelType["htmlAnchor"];
+    private bearCanMove: boolean;
 
     constructor(levelOpts: LevelType) {
         this.id = levelOpts.id;
         this.floor = levelOpts.floor;
         this.htmlAnchor = levelOpts.htmlAnchor;
+        this.bearCanMove = true;
     };
 
     setHtmlAnchor (htmlElem: HTMLElement) {
@@ -25,10 +27,38 @@ export class Level {
         return this.floor;
     };
 
+    renderMapArea() : void {
+        const mapArea = document.createElement('DIV');
+        mapArea.setAttribute('id', 'mapArea');
+
+        this.htmlAnchor.appendChild(mapArea);
+        this.floor.renderHTML(mapArea);
+    };
+
+    getEventAreaElem() : HTMLElement | null {
+        return document.getElementById('eventsArea');
+    };
+
+    renderEventArea() : void {
+        const eventsArea = document.createElement('DIV');
+        eventsArea.setAttribute('id', 'eventsArea');
+        eventsArea.setAttribute('style', `
+            background: #000000;
+            color: #ffffff;
+            border: 3px solid grey;
+            width: 400px;
+            height: 300px;
+        `);
+
+        this.htmlAnchor.appendChild(eventsArea);
+    };
+
     renderLevel() {
         if (this.htmlAnchor) {
             this.htmlAnchor.innerHTML = '';
-            this.floor.renderHTML(this.htmlAnchor);
+
+            this.renderMapArea();
+            this.renderEventArea();
         }
     };
 
@@ -78,7 +108,7 @@ export class Level {
 
         const bearCurrentRoom = this.getBearRoom();
 
-        if (bearCurrentRoom) { // only remove bear if any room has it
+        if (bearCurrentRoom) { // only remove bear if current room has it
             bearCurrentRoom.removeBear();
         }
 
@@ -97,9 +127,30 @@ export class Level {
     playRoomEvents (room : Room) : boolean {
         const roomEvents = room.getEvents();
 
-        for (let i = 0; i < roomEvents.length; i++) {
-            const roomEvent = roomEvents[i];
+        if (roomEvents.length === 0) {
+            return false;
         }
+
+        if (!room.hasBear()) {
+            return false;
+        }
+
+        const eventAreaElem = this.getEventAreaElem();
+
+        if (eventAreaElem == null) {
+            return false;
+        }
+
+        this.bearCanMove = false;
+
+        new EventQueue ({
+            events: roomEvents,
+            onDone: () => {
+                this.bearCanMove = true;
+                room.removeEvents();
+            },
+            eventArea: eventAreaElem,
+        });
 
         return true;
     };
@@ -121,6 +172,11 @@ export class Level {
     };
 
     moveBear (direction: keyof RoomAdjacentPositions) : Room | boolean {
+        console.log('can bear move', this.bearCanMove)
+        if (!this.bearCanMove) {
+            return false;
+        }
+
         if (!this.getBearRoom()) {
             return false;
         }

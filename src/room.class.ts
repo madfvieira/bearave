@@ -38,12 +38,15 @@ export class Room {
         return false;
     };
 
+    getBear() : Bear | boolean {
+        if (this.bear) {
+            return this.bear;
+        }
+        return false;
+    };
+
     addBear() : void {
         this.bear = new Bear({
-            position: {
-                'floorId': 0, // will place the bear later
-                'roomId': '0', // will place the bear later
-            },
             healthPoints: 100,
         });
     };
@@ -74,5 +77,9 @@ export class Room {
 
     getEvents () : Event[] {
         return this.events;
+    };
+
+    removeEvents() : void {
+        this.events = [];
     };
 };
