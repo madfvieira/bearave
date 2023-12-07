@@ -26,17 +26,17 @@ const initialize = () => {
             'id': 1,
             'layout': {
                 'matrix': [
-                    '----------------',
-                    '|000 00   00000|',
-                    '|00  00 0      |',
-                    '|000 00 000000 |',
-                    '|00  00  0     |',
-                    '|00 00   00 000|',
-                    '|0  00 0 00    |',
-                    '|  000 0 00000 |',
-                    '| 000000 0 00  |',
-                    '|  000   0 00 0|',
-                    '|0     000  0  |',
+                    '----------------', // 0
+                    '|000 00   00000|', // 1
+                    '|00  00 0      |', // 2
+                    '|000 00 000000 |', // 3
+                    '|00  00  0     |', // 4
+                    '|00 00   00 000|', // 5
+                    '|0  00 0 00    |', // 6
+                    '|  000 0 00000 |', // 7
+                    '| 000000 0 00  |', // 8
+                    '|  000   0 00 0|', // 9
+                    '|0     000  0  |', // 10
                     '----------------',
                 ],
             },
@@ -50,31 +50,46 @@ const initialize = () => {
     });
 
     level1.setRoomEvents({
-        'roomId': '2_4',
+        'roomId': '4_3',
         'events': [
-            new DialogueEvent({
-                'dialogs': [
-                    new Dialogue({
-                        'message': "Cave is starting to flood!",
-                        'entity': "Cave",
-                        'duration': 1000,
-                    }),
-                ],
-            }),
-            new DelayEvent({ 'duration': 600, 'onDone' : () => { alert('hi')}}),
-            new PromptEvent({
-                'question': "A devilious creature emerges from the dark...",
-                'choices': [
-                    { id: "choice_0", label: "Attack", onPick: () => { console.log('you have picked me')}},
-                    { id: "choice_1", label: "Retreat", onPick: () => {}},
-                ],
-            }),
             new MessageEvent({
-                'message' : "Mind the puddles!",
+                'message' : "Sniff*sniff*... a hunter is entering the cave",
                 'duration': 3600,
+                'onDone'  : () => {
+                    level1.placeHunter('1_4');
+                    level1.renderLevel();
+                },
             }),
+
+            //new DialogueEvent({
+            //    'dialogs': [
+            //        new Dialogue({
+            //            'message': "!",
+            //            'entity': "Cave",
+            //            'duration': 1000,
+            //        }),
+            //    ],
+            //    'onDone' : () => { level1.floodFloor() },
+            //}),
+            //new MessageEvent({
+            //    'message' : "Mind the puddles!",
+            //    'duration': 3600,
+            //}),
             new ClearAreaEvent(),
         ],
+    });
+
+    level1.setRoomEvents({
+        'roomId': '10_14',
+        'events': [
+            new PromptEvent({
+                'question': "Success! Continue to next level?",
+                'choices': [
+                    { id: "choice_0", label: "Yes", onPick: () => { console.log('you have picked me')}},
+                    { id: "choice_1", label: "No", onPick: () => {}},
+                ],
+            }),
+        ]
     });
 
     level1.placeBear('1_4');

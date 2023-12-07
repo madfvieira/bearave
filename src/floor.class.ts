@@ -144,11 +144,19 @@ export class Floor {
                 const matrixIRoomJ = matrixIRooms[j];
                 if (matrixIRoomJ === ' ') {
                     const thisRoom = this.getRoom(i + '_' + j);
-                    if (thisRoom.hasBear()) {
-                        const bearWidth = '5px';
-                        const bearHeight = '5px';
-                        const bearColour = 'black';
-                        wrapperHTML += `<span style="display:inline-block; width:10px; height:10px; background:white; position:relative;">&nbsp;<span id="bear" style="position:absolute; left:calc(50% - ${bearWidth} / 2); top: calc(50% - ${bearHeight} / 2); border-radius:15px; background: ${bearColour}; width:${bearWidth}; height:${bearHeight};"></span></span>`;
+                    if (thisRoom.getUnit('hunter')) {
+                        const hunter = thisRoom.getUnit('hunter');
+                        if (hunter) {
+                            wrapperHTML += hunter.renderHTML().outerHTML;
+                        }
+                        continue;
+                    }
+
+                    if (thisRoom.getUnit('bear')) {
+                        const bear = thisRoom.getUnit('bear');
+                        if (bear) {
+                            wrapperHTML += bear.renderHTML().outerHTML;
+                        }
                         continue;
                     }
                     wrapperHTML += '<span style="display:inline-block; width:10px; height:10px; background:#ffffff;">&nbsp;</span>';

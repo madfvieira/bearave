@@ -1,5 +1,7 @@
 import { Event } from './event.class';
 import { Bear } from './bear.class.js';
+import { Hunter } from './hunter.class.js';
+import { Unit } from './unit.class.js';
 import RoomPosition from 'roomPosition.interface';
 
 interface roomOpts {
@@ -9,7 +11,7 @@ interface roomOpts {
 
 export class Room {
     private id: string;
-    private bear?: Bear;
+    private units?: Unit[];
     private position: RoomPosition;
     private events: Event[];
 
@@ -31,28 +33,55 @@ export class Room {
         return this.id;
     };
 
-    hasBear() : boolean {
-        if (this.bear) {
-            return true;
+    hasUnitId(searchUnitId : string) : boolean {
+        if (this?.units?.length) {
+            const findUnitId = this.units.filter((unit) => {
+                return (unit.getId() === searchUnitId);
+            })[0];
+            if (findUnitId) {
+                return true;
+            }
         }
         return false;
     };
 
-    getBear() : Bear | boolean {
-        if (this.bear) {
-            return this.bear;
+    hasUnit(searchUnit : Unit) : boolean {
+        if (this?.units?.length) {
+            const findUnitId = this.units.filter((unit) => {
+                return (unit.getId() === searchUnit.getId());
+            })[0];
+            if (findUnitId) {
+                return true;
+            }
         }
         return false;
     };
 
-    addBear() : void {
-        this.bear = new Bear({
-            healthPoints: 100,
-        });
+    getUnit(id : string) : Unit | false {
+        if (this?.units?.length) {
+            const findUnitId = this.units.filter((unit) => {
+                return (unit.getId() === id);
+            })[0];
+            if (findUnitId) {
+                return findUnitId;
+            }
+        }
+        return false;
     };
 
-    removeBear() : void {
-        delete this.bear;
+    addUnit(newUnit : Unit) : void {
+        if (!this.units) {
+            this.units = [];
+        };
+        this.units.push(newUnit);
+    };
+
+    removeUnit(rmUnit : Unit) : void {
+        if (this?.units?.length) {
+            this.units = this.units.filter((unit) => {
+                return (unit.getId() !== rmUnit.getId());
+            });
+        }
     };
 
     addEvent <TypeArg extends Event | Event[]> (event : TypeArg) : boolean {

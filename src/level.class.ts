@@ -4,6 +4,8 @@ import { Floor } from './floor.class.js';
 import { Room } from './room.class.js';
 import { Event } from './event.class.js';
 import { EventQueue } from './eventQueue.class.js';
+import { Bear } from './bear.class.js';
+import { Hunter } from './hunter.class.js';
 import RoomAdjacentPositions from './roomAdjacentPositions.interface';
 
 export class Level {
@@ -11,6 +13,8 @@ export class Level {
     private floor: LevelType["floor"];
     private htmlAnchor: LevelType["htmlAnchor"];
     private bearCanMove: boolean;
+    private bear?: Bear;
+    private hunter?: Hunter;
 
     constructor(levelOpts: LevelType) {
         this.id = levelOpts.id;
@@ -62,6 +66,60 @@ export class Level {
         }
     };
 
+    placeHunter (roomId : string) : boolean {
+        const floor = this.floor;
+        if (!floor) {
+            return false;
+        }
+        if (!floor.getRoom(roomId)) {
+            return false;
+        }
+
+        const floorRooms = floor.getRooms();
+
+        const hunterCurrentRoom = this.getHunterRoom();
+        if (hunterCurrentRoom) { // only remove hunter if current room has it
+            const hunterUnit = hunterCurrentRoom.getUnit('hunter');
+            if (hunterUnit) {
+                hunterCurrentRoom.removeUnit(hunterUnit);
+            }
+        }
+
+        const hunterNewRoom = floorRooms.filter((room) => {
+            if (room.getId() === roomId) {
+                return true;
+            }
+            return false;
+        })[0];
+
+        if (!this?.hunter) {
+            this.hunter = new Hunter({ 'healthPoints': 100});
+        }
+
+        hunterNewRoom.addUnit(this.hunter);
+
+        return true;
+    };
+
+    moveHunter (direction: keyof RoomAdjacentPositions) : Room | boolean {
+        if (!this.getHunterRoom()) {
+            return false;
+        }
+
+        const hunterRoomTarget = this.getHunterRoomAdjacentPositions()[direction];
+
+        if (hunterRoomTarget === null) {
+            return false;
+        }
+
+        if (this.placeHunter(hunterRoomTarget.getId())) {
+            this.renderLevel();
+        };
+
+        return true;
+    };
+
+
     setRoomEvents (roomEventOpts: { 'roomId' : string, 'events' : Event[]}) : boolean {
         const floor = this.floor;
         if (!floor) {
@@ -78,11 +136,28 @@ export class Level {
         return true;
     };
 
+    getHunterRoom () : Room | null {
+        const roomStash = this.floor.getRooms();
+
+        const hunterRoom = roomStash.filter((room) => {
+            if (room.hasUnitId('hunter')) {
+                return true;
+            }
+            return false;
+        })[0];
+
+        if (hunterRoom) {
+            return hunterRoom;
+        }
+
+        return null;
+    };
+
     getBearRoom () : Room | null {
         const roomStash = this.floor.getRooms();
 
         const bearRoom = roomStash.filter((room) => {
-            if (room.hasBear()) {
+            if (room.hasUnitId('bear')) {
                 return true;
             }
             return false;
@@ -107,9 +182,11 @@ export class Level {
         const floorRooms = floor.getRooms();
 
         const bearCurrentRoom = this.getBearRoom();
-
         if (bearCurrentRoom) { // only remove bear if current room has it
-            bearCurrentRoom.removeBear();
+            const bearUnit = bearCurrentRoom.getUnit('bear');
+            if (bearUnit) {
+                bearCurrentRoom.removeUnit(bearUnit);
+            }
         }
 
         const bearNewRoom = floorRooms.filter((room) => {
@@ -119,7 +196,11 @@ export class Level {
             return false;
         })[0];
 
-        bearNewRoom.addBear();
+        if (!this?.bear) {
+            this.bear = new Bear({ 'healthPoints': 100});
+        }
+
+        bearNewRoom.addUnit(this.bear);
 
         return true;
     };
@@ -131,7 +212,7 @@ export class Level {
             return false;
         }
 
-        if (!room.hasBear()) {
+        if (!room.hasUnitId('bear')) {
             return false;
         }
 
@@ -153,6 +234,22 @@ export class Level {
         });
 
         return true;
+    };
+
+    getHunterRoomAdjacentPositions () : RoomAdjacentPositions {
+        const hunterRoom = this.getHunterRoom();
+        if (!hunterRoom) {
+            return {
+                'up' : null,
+                'right' : null,
+                'down' : null,
+                'left' : null,
+            };
+        }
+
+        const hunterFloor = this.floor;
+
+        return hunterFloor.getRoomAdjacentRooms(hunterRoom);
     };
 
     getBearRoomAdjacentPositions () : RoomAdjacentPositions {
