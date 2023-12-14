@@ -3,19 +3,13 @@ import LayoutType from './layout.type';
 import { Room } from './room.class.js';
 import RoomAdjacentPositions from './roomAdjacentPositions.interface';
 
-interface CornerPositions {
-    'top-left': Room,
-    'top-right': Room,
-    'bottom-left': Room,
-    'bottom-right': Room,
-};
-
 export class Floor {
     private id: number = 0;
     private layout: LayoutType;
     private isRendered?: boolean = false;
 
-    private rooms: Room[] = [];
+    private rooms: Room[] = []; // workable (filter, reduce, map) rooms stash
+    private initialRooms: Room[]; // holds a 'static' copy of the initial maps, makes it easy to reset 'rooms' to initial state after manipulating this.rooms
 
     constructor(floorOpts: FloorType) {
         this.layout = floorOpts.layout;
@@ -42,6 +36,9 @@ export class Floor {
             },
             []
         )
+
+        this.initialRooms = this.rooms;
+
         this.id = floorOpts.id;
     };
 
@@ -92,6 +89,35 @@ export class Floor {
         }
     };
 
+    areRoomAdjacentRooms(room1: Room, room2: Room) : boolean {
+        const adjancentRoomsToRoom1 = this.getRoomAdjacentRooms(room1);
+
+        const room2Id = room2.getId();
+
+        if (adjancentRoomsToRoom1.up) {
+            if (adjancentRoomsToRoom1.up.getId() === room2Id) {
+                return true
+            }
+        }
+        if (adjancentRoomsToRoom1.right) {
+            if (adjancentRoomsToRoom1.right.getId() === room2Id) {
+                return true
+            }
+        }
+        if (adjancentRoomsToRoom1.down) {
+            if (adjancentRoomsToRoom1.down.getId() === room2Id) {
+                return true
+            }
+        }
+        if (adjancentRoomsToRoom1.left) {
+            if (adjancentRoomsToRoom1.left.getId() === room2Id) {
+                return true
+            }
+        }
+
+        return false;
+    };
+
     getRoomAdjacentRooms(targetRoom: Room) : RoomAdjacentPositions {
         const targetRoomRow = targetRoom.getPosition().row;
         const targetRoomCol = targetRoom.getPosition().col;
@@ -121,6 +147,125 @@ export class Floor {
         };
 
         return adjacentRoomsPositions;
+    };
+
+    getNumberOfAdjacentRooms(room: Room) : number {
+        const adjacentRooms = this.getRoomAdjacentRooms(room);
+        let adjacentRoomCount = 0;
+        if (adjacentRooms.up) { adjacentRoomCount++ }
+        if (adjacentRooms.right) { adjacentRoomCount++ }
+        if (adjacentRooms.down) { adjacentRoomCount++ }
+        if (adjacentRooms.left) { adjacentRoomCount++ }
+
+        return adjacentRoomCount;
+    };
+
+    isDeadEndRoom(room: Room) : boolean {
+        if (this.getNumberOfAdjacentRooms(room) === 1) {
+            return true;
+        }
+
+        return false;
+    };
+
+    getRoomsInDirection(rooms: Room | Room[], direction: "up" | "right" | "down" | "left") : Room[] {
+        let roomsInDirection : Room | Room[];
+        if (!Array.isArray(rooms)) {
+            roomsInDirection = [];
+            roomsInDirection.push(rooms);
+        } else {
+            roomsInDirection = rooms;
+        }
+
+        const nextRoomInDirection = this.getRoomAdjacentRooms(roomsInDirection[roomsInDirection.length - 1])[direction];
+
+        if (nextRoomInDirection) { // end recursion as it hit the end in this direction
+            roomsInDirection.push(nextRoomInDirection);
+            this.getRoomsInDirection(roomsInDirection, direction);
+            return roomsInDirection;
+        }
+        else {
+            return roomsInDirection;
+        }
+    };
+
+    plotRoute(rooms: Room[], route: Room[] = []) : Room[] {
+        const startRoom = rooms[0];
+        const endRoom = rooms[rooms.length - 1];
+
+        if (!route.length) {
+            route = [ startRoom ];
+        }
+
+        let nextRoom = route[route.length - 1];
+        for (let i = (route.length); i < rooms.length; i++) {
+            const room = rooms[i];
+            if (this.areRoomAdjacentRooms(nextRoom, room)) {
+                route.push(room);
+                nextRoom = room;
+            }
+            else {
+                nextRoom = route[route.length - 1];
+            }
+        }
+
+        // if route has endRoom, then we've plotted the whole route
+        // and can end the recursion and return
+        const routeHasEndRoom = route.filter((room) => {
+            return (room.getId() === endRoom.getId());
+        })[0];
+
+        if (routeHasEndRoom) {
+            return route;
+        } else {
+            const UnroutedRooms = rooms.filter((room) => {
+                const routedToRoom = route.filter((routedRoom) => {
+                    return (routedRoom.getId() === room.getId());
+                })[0];
+
+                return routedToRoom ? false : true;
+            });
+
+            return this.plotRoute(route.concat(UnroutedRooms), route);
+        }
+        return [];
+    };
+
+    createRoute() : Room[] {
+        return this.plotRoute(this.deadEndFillFloor());
+    };
+
+    deadEndFillFloor(): Room[] {
+        const startRoom = this.rooms[0];
+        const endRoom = this.rooms[this.rooms.length - 1];
+
+        // first iteration of the recursion is catchable with:
+        //if (this.rooms.length === this.initialRooms.length) {
+        //    { ... }
+        //}
+
+        const roomsCount = this.rooms.length;
+        this.rooms = this.rooms.filter((room) => {
+            // remove room if it's a dead end (excluding startRoom and endRoom)
+            if (
+                this.isDeadEndRoom(room)
+                && (startRoom.getId() !== room.getId() && endRoom.getId() !== room.getId())
+            ) {
+                return false;
+            } else {
+                return true;
+            }
+        });
+
+        // if these are equal, then we've filtered out all the deadend rooms and can
+        // end the recursion and return
+        if (roomsCount === this.rooms.length) {
+            const roomsSet = this.rooms;
+            this.rooms = this.initialRooms; // reset this.rooms to 'initialRooms'
+            return roomsSet;
+        } else {
+            return this.deadEndFillFloor();
+        }
     };
 
     private getFloorHTML() {

@@ -3,6 +3,7 @@ import LevelType from './level.type';
 import { Floor } from './floor.class.js';
 import { Room } from './room.class.js';
 import { Event } from './event.class.js';
+import { DelayEvent } from './delay.event.class.js';
 import { EventQueue } from './eventQueue.class.js';
 import { Bear } from './bear.class.js';
 import { Hunter } from './hunter.class.js';
@@ -119,6 +120,42 @@ export class Level {
         return true;
     };
 
+    moveHunterAcrossMaze () {
+        const roomsToVisit = this.floor.createRoute();
+
+        const travelRouteEvents = [];
+
+        for (let i = 0; i < roomsToVisit.length; i++) {
+            travelRouteEvents.push(
+                new DelayEvent({
+                    duration: 500,
+                    onDone: () => {
+                        const bearRoom = this.getBearRoom();
+                        if (bearRoom) {
+                            if (bearRoom.getId() !== '10_14') {
+                                this.placeHunter(roomsToVisit[i].getId());
+                                this.renderLevel();
+                            }
+                        }
+                    },
+                })
+            );
+        }
+
+        const eventAreaElem = this.getEventAreaElem();
+
+        if (eventAreaElem == null) {
+            return false;
+        }
+
+        new EventQueue ({
+            events: travelRouteEvents,
+            onDone: () => {
+                console.log('all moves done');
+            },
+            eventArea: eventAreaElem,
+        });
+    };
 
     setRoomEvents (roomEventOpts: { 'roomId' : string, 'events' : Event[]}) : boolean {
         const floor = this.floor;
