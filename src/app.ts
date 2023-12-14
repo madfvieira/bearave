@@ -30,8 +30,8 @@ const initialize = () => {
                     '|000 00   00000|', // 1
                     '|00  00 0      |', // 2
                     '|000 00 000000 |', // 3
-                    '|00  00  0     |', // 4
-                    '|00 00   00 000|', // 5
+                    '|00  0   0     |', // 4
+                    '|00 00 0 00 000|', // 5
                     '|0  00 0 00    |', // 6
                     '|  000 0 00000 |', // 7
                     '| 000000 0 00  |', // 8
@@ -58,6 +58,7 @@ const initialize = () => {
                 'onDone'  : () => {
                     level1.placeHunter('1_4');
                     level1.renderLevel();
+                    level1.moveHunterAcrossMaze();
                 },
             }),
 
@@ -94,20 +95,6 @@ const initialize = () => {
 
     level1.placeBear('1_4');
     level1.renderLevel();
-    document.onkeydown = (event) => {
-        if (event.keyCode == 38) { // up arrow
-            level1.moveBear('up');
-        }
-        else if (event.keyCode == 40) { // down arrow
-            level1.moveBear('down');
-        }
-        else if (event.keyCode == 37) { // left arrow
-            level1.moveBear('left');
-        }
-        else if (event.keyCode == 39) { // right arrow
-            level1.moveBear('right');
-        }
-    };
 };
 
 initialize();
