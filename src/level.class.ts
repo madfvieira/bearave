@@ -8,6 +8,7 @@ import { EventQueue } from './eventQueue.class.js';
 import { Bear } from './bear.class.js';
 import { Hunter } from './hunter.class.js';
 import RoomAdjacentPositions from './roomAdjacentPositions.interface';
+import { ActionType } from './action.type.js';
 
 export class Level {
     private id: LevelType["id"];
@@ -234,10 +235,44 @@ export class Level {
         })[0];
 
         if (!this?.bear) {
-            this.bear = new Bear({ 'healthPoints': 100});
+            this.bear = new Bear({
+                'healthPoints': 100,
+            });
+            this.bear.setControls([
+                {
+                    "action": { "move" : "up" },
+                    "keyCode": 38,
+                },
+                {
+                    "action": { "move" : "right" },
+                    "keyCode": 39,
+                },
+                {
+                    "action": { "move" : "down" },
+                    "keyCode": 40,
+                },
+                {
+                    "action": { "move" : "left" },
+                    "keyCode": 37,
+                },
+            ]);
         }
 
         bearNewRoom.addUnit(this.bear);
+
+        document.onkeydown = (event) => {
+            if (this.bear) {
+                const bearControls = this.bear.getControls();
+                for (let i = 0; i < bearControls.length ; i++) {
+                    const bearControl = bearControls[i];
+                    if (event.keyCode == bearControl.keyCode) {
+                        if (bearControl.action.move) {
+                            this.moveBear(bearControl.action.move);
+                        }
+                    }
+                }
+            }
+        };
 
         return true;
     };
@@ -329,5 +364,11 @@ export class Level {
         };
 
         return true;
+    };
+
+    setBearControls(bear : Bear) {
+    };
+
+    unsetBearControls(bear : Bear) {
     };
 };
