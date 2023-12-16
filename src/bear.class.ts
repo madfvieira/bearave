@@ -16,8 +16,8 @@ export class Bear extends Unit {
     constructor (bearOpts : BearOpts) {
         super({
             id : 'bear',
-            width: '5px',
-            height: '5px',
+            width: '15px',
+            height: '15px',
             colour: 'black',
         })
         this.healthPoints = bearOpts.healthPoints;

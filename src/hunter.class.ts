@@ -10,8 +10,8 @@ export class Hunter extends Unit {
     constructor (hunterOpts : HunterOpts) {
         super({
             id : 'hunter',
-            width: '7px',
-            height: '7px',
+            width: '20px',
+            height: '20px',
             colour: 'red',
         })
 

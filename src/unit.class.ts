@@ -24,7 +24,7 @@ export class Unit {
 
     renderHTML() : HTMLElement {
         const unitHTML = document.createElement('SPAN');
-        unitHTML.setAttribute('style', `display:inline-block; width:10px; height:10px; background:#FFFFFF; position:relative;`);
+        unitHTML.setAttribute('style', `display:inline-block; width:30px; height:30px; background:#FFFFFF; position:relative;`);
         unitHTML.innerHTML  = '&nbsp;';
         unitHTML.innerHTML += `<span id="${this.id}" style="position:absolute; left:calc(50% - ${this.width} / 2); top: calc(50% - ${this.height} / 2); border-radius:15px; background: ${this.colour}; width:${this.width}; height:${this.height};"></span>`;
 

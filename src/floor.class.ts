@@ -304,7 +304,7 @@ export class Floor {
                         }
                         continue;
                     }
-                    wrapperHTML += '<span style="display:inline-block; width:10px; height:10px; background:#ffffff;">&nbsp;</span>';
+                    wrapperHTML += '<span style="display:inline-block; width:30px; height:30px; background:#ffffff;">&nbsp;</span>';
                     continue;
                 }
                 if (matrixIRoomJ === '-') { // ceiling/ground
@@ -318,7 +318,7 @@ export class Floor {
                             continue;
                         }
                         // ceiling generic 
-                        wrapperHTML += '<span style="display:inline-block; width:10px; height:1px; background: grey;">&nbsp</span>';
+                        wrapperHTML += '<span style="display:inline-block; width:30px; height:1px; background: grey;">&nbsp</span>';
                         continue;
                     }
                     else if (i === this.layout.matrix.length - 1) { // ground
@@ -331,23 +331,23 @@ export class Floor {
                             continue;
                         }
                         // ground generic 
-                        wrapperHTML += '<span style="display:inline-block; width:10px; height:1px; background: grey;">&nbsp</span>';
+                        wrapperHTML += '<span style="display:inline-block; width:30px; height:1px; background: grey;">&nbsp</span>';
                         continue;
                     }
                 }
 
                 if (matrixIRoomJ === '|') { // wall
                     if (!matrixIRooms[j - 1] || matrixIRooms[j - 1] === '0') { // it's a left wall
-                        wrapperHTML += '<span style="display:inline-block; width:1px; height:10px; background: grey;">&nbsp</span>';
+                        wrapperHTML += '<span style="display:inline-block; width:1px; height:30px; background: grey;">&nbsp</span>';
                         continue;
                     }
                     else if (!matrixIRooms[j + 1] || matrixIRooms[j + 1] === '0') { // it's a right wall
-                        wrapperHTML += '<span style="display:inline-block; width:1px; height:10px; background: grey;">&nbsp</span>';
+                        wrapperHTML += '<span style="display:inline-block; width:1px; height:30px; background: grey;">&nbsp</span>';
                         continue;
                     }
                 }
 
-                wrapperHTML += '<span style="display:inline-block; width:10px; height:10px; background:#cd5412;">&nbsp;</span>';
+                wrapperHTML += '<span style="display:inline-block; width:30px; height:30px; background:#cd5412;">&nbsp;</span>';
             }
             wrapperHTML += '</div>';
         }

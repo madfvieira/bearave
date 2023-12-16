@@ -52,8 +52,11 @@ export class Level {
             background: #000000;
             color: #ffffff;
             border: 3px solid grey;
-            width: 400px;
-            height: 300px;
+            width: 666px;
+            height: 360px;
+            font-size: 22px;
+            padding: 1em;
+            box-sizing: border-box;
         `);
 
         this.htmlAnchor.appendChild(eventsArea);
