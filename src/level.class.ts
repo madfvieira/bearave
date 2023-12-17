@@ -14,7 +14,6 @@ export class Level {
     private id: LevelType["id"];
     private floor: LevelType["floor"];
     private htmlAnchor: LevelType["htmlAnchor"];
-    private bearCanMove: boolean;
     private bear?: Bear;
     private hunter?: Hunter;
 
@@ -22,7 +21,6 @@ export class Level {
         this.id = levelOpts.id;
         this.floor = levelOpts.floor;
         this.htmlAnchor = levelOpts.htmlAnchor;
-        this.bearCanMove = true;
     };
 
     setHtmlAnchor (htmlElem: HTMLElement) {
@@ -259,6 +257,7 @@ export class Level {
                     "keyCode": 37,
                 },
             ]);
+            this.bear.allowMovement();
         }
 
         bearNewRoom.addUnit(this.bear);
@@ -287,7 +286,8 @@ export class Level {
             return false;
         }
 
-        if (!room.hasUnitId('bear')) {
+        const bearInRoom = room.getUnit('bear');
+        if (!bearInRoom) {
             return false;
         }
 
@@ -297,12 +297,12 @@ export class Level {
             return false;
         }
 
-        this.bearCanMove = false;
+        bearInRoom.disallowMovement();
 
         new EventQueue ({
             events: roomEvents,
             onDone: () => {
-                this.bearCanMove = true;
+                bearInRoom.allowMovement();
                 room.removeEvents();
             },
             eventArea: eventAreaElem,
@@ -344,29 +344,34 @@ export class Level {
     };
 
     moveBear (direction: keyof RoomAdjacentPositions) : Room | boolean {
-        console.log('can bear move', this.bearCanMove)
-        if (!this.bearCanMove) {
-            return false;
-        }
+        const bear = this?.bear;
 
-        if (!this.getBearRoom()) {
-            return false;
-        }
-
-        const bearRoomTarget = this.getBearRoomAdjacentPositions()[direction];
-
-        if (bearRoomTarget === null) {
-            return false;
-        }
-
-        if (this.placeBear(bearRoomTarget.getId())) {
-            this.renderLevel();
-            if (bearRoomTarget.hasEvents()) {
-                this.playRoomEvents(bearRoomTarget);
+        if (bear) {
+            if (!bear.canMove()) {
+                return false;
             }
-        };
 
-        return true;
+            if (!this.getBearRoom()) {
+                return false;
+            }
+
+            const bearRoomTarget = this.getBearRoomAdjacentPositions()[direction];
+
+            if (bearRoomTarget === null) {
+                return false;
+            }
+
+            if (this.placeBear(bearRoomTarget.getId())) {
+                this.renderLevel();
+                if (bearRoomTarget.hasEvents()) {
+                    this.playRoomEvents(bearRoomTarget);
+                }
+            };
+
+            return true;
+        }
+
+        return false;
     };
 
     setBearControls(bear : Bear) {

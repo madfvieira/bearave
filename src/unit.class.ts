@@ -10,12 +10,28 @@ export class Unit {
     private width: string;
     private height: string;
     private colour: string;
+    private movement?: boolean;
 
     constructor (params : unitParams) {
         this.id = params.id;
         this.width = params.width;
         this.height = params.height;
         this.colour = params.colour;
+    };
+
+    allowMovement() : void {
+        this.movement= true;
+    };
+
+    disallowMovement() : void {
+        this.movement= false;
+    };
+
+    canMove() : boolean {
+        if (this?.movement) {
+            return true;
+        }
+        return false;
     };
 
     getId() : unitParams["id"] {
