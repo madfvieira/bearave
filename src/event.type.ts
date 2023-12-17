@@ -28,26 +28,31 @@ interface MessageOpts {
     duration: number,
     clearLog?: boolean,
     onDone?: () => void,
+    criteriaCheck?: () => boolean,
 };
 
 interface DialogueOpts {
     dialogs: Dialogue[],
     onDone?: () => void,
+    criteriaCheck?: () => boolean,
 };
 
 interface PromptOpts {
     question: string,
     choices: ChoiceInterface[],
     onDone?: () => void,
+    criteriaCheck?: () => boolean,
 };
 
 interface DelayOpts {
     duration: number,
     onDone?: () => void,
+    criteriaCheck?: () => boolean,
 };
 
 interface ClearAreaOpts {
     onDone?: () => void,
+    criteriaCheck?: () => boolean,
 };
 
 export default EventType;

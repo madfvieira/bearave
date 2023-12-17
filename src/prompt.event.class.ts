@@ -73,6 +73,13 @@ export class PromptEvent extends Event {
 
     override execution = () => {
         const PromptOpts = super.getOpts() as EventOpts<"prompt">;
+
+        if (PromptOpts?.criteriaCheck) {
+            if (!PromptOpts.criteriaCheck()) {
+                return false;
+            }
+        }
+
         const wrapper = super.wrapperHTML();
         const eventHTML = document.createElement('DIV');
         eventHTML.setAttribute('id', 'event');

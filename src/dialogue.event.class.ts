@@ -12,6 +12,13 @@ export class DialogueEvent extends Event {
 
     override execution = () => {
         const DialogueOpts = super.getOpts() as EventOpts<"dialogue">;
+
+        if (DialogueOpts?.criteriaCheck) {
+            if (!DialogueOpts.criteriaCheck()) {
+                return false;
+            }
+        }
+
         const eventArea = super.getEventArea();
         if (!eventArea) {
             return;

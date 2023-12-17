@@ -10,6 +10,13 @@ export class ClearAreaEvent extends Event {
 
     override execution = () => {
         const ClearAreaOpts = super.getOpts() as EventOpts<"clearArea">;
+
+        if (ClearAreaOpts?.criteriaCheck) {
+            if (!ClearAreaOpts.criteriaCheck()) {
+                return false;
+            }
+        }
+
         const wrapper = super.wrapperHTML();
 
         const eventArea = super.getEventArea();

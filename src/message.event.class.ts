@@ -10,6 +10,13 @@ export class MessageEvent extends Event {
 
     override execution = () => {
         const MessageOpts = super.getOpts() as EventOpts<"message">;
+
+        if (MessageOpts?.criteriaCheck) {
+            if (!MessageOpts.criteriaCheck()) {
+                return false;
+            }
+        }
+
         const wrapper = super.wrapperHTML();
         const eventHTML = document.createElement('DIV');
         eventHTML.setAttribute('id', 'event');
