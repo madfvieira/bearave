@@ -60,6 +60,13 @@ const initialize = () => {
                     level1.renderLevel();
                     level1.moveHunterAcrossMaze();
                 },
+                'criteriaCheck': () => {
+                    const bearRoom = level1.getBearRoom();
+                    if (bearRoom) {
+                        return bearRoom.getId() === '4_3';
+                    }
+                    return false;
+                },
             }),
 
             //new DialogueEvent({
