@@ -1,4 +1,5 @@
 import { Floor } from './floor.class';
+import { Hunter } from './hunter.class';
 
 type LevelType = {
     id: number,

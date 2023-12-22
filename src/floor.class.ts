@@ -14,7 +14,14 @@ export class Floor {
     constructor(floorOpts: FloorType) {
         this.layout = floorOpts.layout;
 
-        this.rooms = floorOpts.layout.matrix.reduce(
+        this.rooms = this.constructRoomsFromMatrix(floorOpts.layout.matrix);
+        this.initialRooms = this.rooms;
+
+        this.id = floorOpts.id;
+    };
+
+    constructRoomsFromMatrix (matrix: String[]) : Room[] {
+        const newRooms = matrix.reduce(
             (roomsAccumulator : Room[], currentRow, rowIndex) : any => {
                 const rowBlocks = currentRow.split('');
                 for (let colIndex = 0; colIndex < rowBlocks.length; colIndex++) {
@@ -35,11 +42,9 @@ export class Floor {
                 return roomsAccumulator;
             },
             []
-        )
+        );
 
-        this.initialRooms = this.rooms;
-
-        this.id = floorOpts.id;
+        return newRooms;
     };
 
     get () {
@@ -72,6 +77,11 @@ export class Floor {
                 return (room.getId() === id);
             })[0]
         );
+    };
+
+    setRooms(rooms: Room[]) : void {
+        this.rooms = rooms;
+        this.initialRooms = this.rooms;
     };
 
     getRoomByPosition({ row, col } : { row: number, col: number }) : Room | null {

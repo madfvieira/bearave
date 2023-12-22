@@ -11,11 +11,13 @@ export class EventQueue {
     private events: eventQueueOpts["events"];
     private onDone: eventQueueOpts["onDone"];
     private eventArea: eventQueueOpts["eventArea"];
+    private canProcessQueue: boolean;
 
     constructor (opts: eventQueueOpts) {
         this.events = opts.events;
         this.onDone = opts.onDone;
         this.eventArea = opts.eventArea;
+        this.canProcessQueue = true;
 
         this.processQueue().then(() => {
             this.onDone();
@@ -24,6 +26,10 @@ export class EventQueue {
 
     async processQueue() : Promise<void> {
         for (let i = 0; i < this.events.length; i++) {
+            if (!this.canProcessQueue) {
+                console.log('breaking event queues')
+                break;
+            }
             await this.playEvent({
                 event: this.events[i]
             });
@@ -31,8 +37,15 @@ export class EventQueue {
         }
     };
 
+    killQueue() : void {
+        this.canProcessQueue = false;
+    };
+
     playEvent (playOpts: { event: Event }) : Promise<any> {
         return new Promise(async resolve => {
+            if (!this.canProcessQueue) {
+                return setTimeout(resolve, 0);
+            }
             playOpts.event.setEventArea(this.eventArea);
             await playOpts.event.execution();
             playOpts.event.onDone();

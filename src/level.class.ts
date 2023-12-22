@@ -3,6 +3,7 @@ import LevelType from './level.type';
 import { Floor } from './floor.class.js';
 import { Room } from './room.class.js';
 import { Event } from './event.class.js';
+import { MoveEvent } from './move.event.class.js';
 import { DelayEvent } from './delay.event.class.js';
 import { EventQueue } from './eventQueue.class.js';
 import { Bear } from './bear.class.js';
@@ -10,21 +11,73 @@ import { Hunter } from './hunter.class.js';
 import RoomAdjacentPositions from './roomAdjacentPositions.interface';
 import { ActionType } from './action.type.js';
 
+/*
+* Class Level can be used as a top level controller for generating playable
+  levels, containing units, rooms, events, etc
+* @param {id|number} if of the level
+* @param {floor|Floor} floor controller class to handle room operations
+* @param {htmlAnchor|HTMLElement} html element where the level is generated
+* @param {bear|Bear} optional Bear unit
+* @param {hunter|Hunter} optional Hunter unit
+* @param {eventQueueStash|EventQueue[]} stash of EventQueue controllers which holds
+*        allows us to oversee any event queue and by extension any event that this
+*        level triggers/creates.
+*        NB: any eventQueue/events should be pushed into this stash
+*/
 export class Level {
     private id: LevelType["id"];
     private floor: LevelType["floor"];
     private htmlAnchor: LevelType["htmlAnchor"];
     private bear?: Bear;
     private hunter?: Hunter;
+    private eventQueueStash: EventQueue[];
 
     constructor(levelOpts: LevelType) {
         this.id = levelOpts.id;
         this.floor = levelOpts.floor;
         this.htmlAnchor = levelOpts.htmlAnchor;
+
+        this.eventQueueStash = [];
     };
 
     setHtmlAnchor (htmlElem: HTMLElement) {
         this.htmlAnchor = htmlElem;
+    };
+
+    setHunter (hunter: Hunter) : void {
+        this.hunter = hunter;
+    };
+
+    deleteHunter () : void {
+        delete this.hunter;
+    };
+
+    getHunter () : Hunter | null {
+        if (this?.hunter) {
+            return this.hunter;
+        }
+        return null;
+    };
+
+    getEventQueueStash () : EventQueue[] {
+        return this.eventQueueStash;
+    };
+
+    killAllEventQueueStash (eventQueuesInStash: EventQueue[]) : void {
+        if (eventQueuesInStash.length) {
+            for (let i = 0; i < eventQueuesInStash.length; i++) {
+                const eventQueue = eventQueuesInStash[i];
+                eventQueue.killQueue();
+            }
+        }
+    };
+
+    removeFromEventQueueStash (eventQueueToRemove: EventQueue) : void {
+        const indexOfEventQueueToRemove = this.eventQueueStash.indexOf(eventQueueToRemove);
+
+        if (indexOfEventQueueToRemove >= 0) {
+            this.eventQueueStash = this.eventQueueStash.splice(indexOfEventQueueToRemove, 1);
+        }
     };
 
     getFloor() : Floor {
@@ -77,6 +130,9 @@ export class Level {
         if (!floor.getRoom(roomId)) {
             return false;
         }
+        if (!this?.hunter) {
+            return false;
+        }
 
         const floorRooms = floor.getRooms();
 
@@ -94,10 +150,6 @@ export class Level {
             }
             return false;
         })[0];
-
-        if (!this?.hunter) {
-            this.hunter = new Hunter({ 'healthPoints': 100});
-        }
 
         hunterNewRoom.addUnit(this.hunter);
 
@@ -127,18 +179,22 @@ export class Level {
 
         const travelRouteEvents = [];
 
+        const thisHunter = this.hunter;
+        if (!thisHunter) {
+            return false;
+        }
+
         for (let i = 0; i < roomsToVisit.length; i++) {
+            const roomToVisit = roomsToVisit[i];
+
             travelRouteEvents.push(
-                new DelayEvent({
-                    duration: 500,
+                new DelayEvent({ duration: 1000 }),
+                new MoveEvent({
+                    unit: thisHunter,
+                    room: roomToVisit,
+                    level: this,
                     onDone: () => {
-                        const bearRoom = this.getBearRoom();
-                        if (bearRoom) {
-                            if (bearRoom.getId() !== '10_14') {
-                                this.placeHunter(roomsToVisit[i].getId());
-                                this.renderLevel();
-                            }
-                        }
+                        this.renderLevel();
                     },
                 })
             );
@@ -150,16 +206,18 @@ export class Level {
             return false;
         }
 
-        new EventQueue ({
+        const eventQueueMoveHunterAcrossMaze = new EventQueue ({
             events: travelRouteEvents,
             onDone: () => {
-                console.log('all moves done');
+                this.removeFromEventQueueStash(eventQueueMoveHunterAcrossMaze);
             },
             eventArea: eventAreaElem,
         });
+
+        this.eventQueueStash.push(eventQueueMoveHunterAcrossMaze);
     };
 
-    setRoomEvents (roomEventOpts: { 'roomId' : string, 'events' : Event[]}) : boolean {
+    addRoomEvents (roomEventOpts: { 'roomId' : string, 'events' : Event[]}) : boolean {
         const floor = this.floor;
         if (!floor) {
             return false;
@@ -372,6 +430,30 @@ export class Level {
         }
 
         return false;
+    };
+
+    initialise (setupFunc: () => void) : void {
+        if (this?.bear) {
+            delete this.bear;
+        }
+        if (this?.hunter) {
+            delete this.hunter;
+        }
+
+        this.killAllEventQueueStash(this.eventQueueStash);
+
+        this.floor.setRooms(
+            this.floor.constructRoomsFromMatrix(this.floor.getLayout().matrix)
+        );
+        setupFunc();
+    };
+
+    destroy() {
+        this.htmlAnchor.innerHTML = '';
+        delete this?.bear;
+        delete this?.hunter;
+        this.killAllEventQueueStash(this.eventQueueStash);
+        this.eventQueueStash = [];
     };
 
     setBearControls(bear : Bear) {

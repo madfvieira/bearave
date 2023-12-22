@@ -1,9 +1,12 @@
 import { MessageEvent } from './message.event.class.js';
 import { DelayEvent } from './delay.event.class.js';
 import { Dialogue } from './dialogue.class.js';
+import { Unit } from './unit.class.js';
+import { Room } from './room.class.js';
+import { Level } from './level.class.js';
 import ChoiceInterface from './choice.interface.js';
 
-export type EventTypesNames = "message" | "delay" | "dialogue" | "clearArea" | "prompt";
+export type EventTypesNames = "message" | "delay" | "dialogue" | "clearArea" | "prompt" | "move";
 
 export type EventOpts <TEvent extends EventTypesNames> =
     TEvent extends "message"
@@ -16,7 +19,9 @@ export type EventOpts <TEvent extends EventTypesNames> =
                     ? PromptOpts
                     : TEvent extends "clearArea"
                         ? ClearAreaOpts
-                        : never
+                        : TEvent extends "move"
+                            ? MoveOpts
+                            : never
 ;
 
 interface EventType {
@@ -51,6 +56,14 @@ interface DelayOpts {
 };
 
 interface ClearAreaOpts {
+    onDone?: () => void,
+    criteriaCheck?: () => boolean,
+};
+
+interface MoveOpts {
+    unit: Unit,
+    room: Room,
+    level: Level,
     onDone?: () => void,
     criteriaCheck?: () => boolean,
 };
