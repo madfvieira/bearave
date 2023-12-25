@@ -357,11 +357,12 @@ export class Level {
 
         bearInRoom.disallowMovement();
 
-        new EventQueue ({
+        const eventQueueRoomEvents = new EventQueue ({
             events: roomEvents,
             onDone: () => {
                 bearInRoom.allowMovement();
                 room.removeEvents();
+                this.removeFromEventQueueStash(eventQueueRoomEvents);
             },
             eventArea: eventAreaElem,
         });
