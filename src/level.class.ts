@@ -419,12 +419,30 @@ export class Level {
                 return false;
             }
 
-            if (this.placeBear(bearRoomTarget.getId())) {
-                this.renderLevel();
-                if (bearRoomTarget.hasEvents()) {
-                    this.playRoomEvents(bearRoomTarget);
-                }
-            };
+            const eventAreaElem = this.getEventAreaElem();
+
+            if (eventAreaElem == null) {
+                return false;
+            }
+
+            const eventQueueMoveBearEvent = new EventQueue ({
+                events: [
+                    new MoveEvent({
+                        unit: bear,
+                        room: bearRoomTarget,
+                        level: this,
+                        onDone: () => {},
+                    })
+                ],
+                onDone: () => {
+                    this.renderLevel();
+                    this.removeFromEventQueueStash(eventQueueMoveBearEvent);
+                    if (bearRoomTarget.hasEvents()) {
+                        this.playRoomEvents(bearRoomTarget);
+                    }
+                },
+                eventArea: eventAreaElem,
+            });
 
             return true;
         }
