@@ -17,6 +17,14 @@ const initialize = () => {
         return false;
     }
 
+    const controlsList = document.createElement('DIV');
+    controlsList.innerHTML  = '<span>w - move up</span>';
+    controlsList.innerHTML += '<span style="margin-left: 1em">d - move right</span>';
+    controlsList.innerHTML += '<span style="margin-left: 1em">s - move down</span>';
+    controlsList.innerHTML += '<span style="margin-left: 1em">a - move left</span>';
+
+    document.body.prepend(controlsList);
+
     const floor1 = new Floor(
         {
             'id': 1,
