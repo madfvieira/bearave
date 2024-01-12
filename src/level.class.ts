@@ -1,4 +1,3 @@
-import FloorType from './floor.type';
 import LevelType from './level.type';
 import { Floor } from './floor.class.js';
 import { Room } from './room.class.js';
@@ -9,7 +8,6 @@ import { EventQueue } from './eventQueue.class.js';
 import { Bear } from './bear.class.js';
 import { Hunter } from './hunter.class.js';
 import RoomAdjacentPositions from './roomAdjacentPositions.interface';
-import { ActionType } from './action.type.js';
 
 /*
 * Class Level can be used as a top level controller for generating playable
@@ -25,7 +23,6 @@ import { ActionType } from './action.type.js';
 *        NB: any eventQueue/events should be pushed into this stash
 */
 export class Level {
-    private id: LevelType["id"];
     private floor: LevelType["floor"];
     private htmlAnchor: LevelType["htmlAnchor"];
     private bear?: Bear;
@@ -33,7 +30,6 @@ export class Level {
     private eventQueueStash: EventQueue[];
 
     constructor(levelOpts: LevelType) {
-        this.id = levelOpts.id;
         this.floor = levelOpts.floor;
         this.htmlAnchor = levelOpts.htmlAnchor;
 
@@ -294,10 +290,7 @@ export class Level {
         })[0];
 
         if (!this?.bear) {
-            this.bear = new Bear({
-                'healthPoints': 100,
-            });
-            this.bear.setControls([
+            this.bear = new Bear(); this.bear.setControls([
                 {
                     "action": { "move" : "up" },
                     "keyCode": 38,
@@ -473,11 +466,5 @@ export class Level {
         delete this?.hunter;
         this.killAllEventQueueStash(this.eventQueueStash);
         this.eventQueueStash = [];
-    };
-
-    setBearControls(bear : Bear) {
-    };
-
-    unsetBearControls(bear : Bear) {
     };
 };

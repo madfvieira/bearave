@@ -1,4 +1,4 @@
-import EventType, { EventOpts } from './event.type';
+import EventType from './event.type';
 
 export abstract class Event {
     private opts: EventType["opts"];

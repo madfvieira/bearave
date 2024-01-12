@@ -1,5 +1,5 @@
 import { Event } from './event.class.js';
-import EventType, { EventOpts } from './event.type';
+import { EventOpts } from './event.type';
 
 export class MessageEvent extends Event {
     constructor (MessageOpts : EventOpts<"message">) {
@@ -30,7 +30,7 @@ export class MessageEvent extends Event {
 
         return (
             new Promise(async resolve => {
-                await setTimeout(resolve, MessageOpts.duration);
+                setTimeout(resolve, MessageOpts.duration);
                 return resolve;
             })
         );

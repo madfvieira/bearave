@@ -1,5 +1,5 @@
 import { Event } from './event.class.js';
-import EventType, { EventOpts } from './event.type';
+import { EventOpts } from './event.type';
 import ChoiceInterface from './choice.interface.js';
 
 export class PromptEvent extends Event {
@@ -46,11 +46,6 @@ export class PromptEvent extends Event {
             new Promise(resolve => {
                 const inputChoices = this.getChoicesInputsHTML();
                 for (const input of inputChoices) {
-                    interface clickEventOnHTMLElm {
-                        target: {
-                            name: string
-                        },
-                    };
                     input.addEventListener('click', async (event) => {
                         if (event && typeof(event.target) !== 'undefined' &&
                             (event.target instanceof Element)
@@ -58,12 +53,11 @@ export class PromptEvent extends Event {
                             const choicePicked = event.target.getAttribute('name');
                             if (choicePicked?.length) {
                                 const choicePickedBehaviour = this.getChoiceOnPickFunc(PromptOpts, choicePicked);
-                                console.log('func to run', choicePickedBehaviour)
                                 choicePickedBehaviour();
-                                await setTimeout(resolve, 100);
+                                setTimeout(resolve, 100);
                             }
                         }
-                        await setTimeout(resolve, 100);
+                        setTimeout(resolve, 100);
                     });
                 }
                 return resolve;

@@ -6,7 +6,6 @@ import RoomAdjacentPositions from './roomAdjacentPositions.interface';
 export class Floor {
     private id: number = 0;
     private layout: LayoutType;
-    private isRendered?: boolean = false;
 
     private rooms: Room[] = []; // workable (filter, reduce, map) rooms stash
     private initialRooms: Room[]; // holds a 'static' copy of the initial maps, makes it easy to reset 'rooms' to initial state after manipulating this.rooms

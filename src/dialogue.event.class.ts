@@ -1,5 +1,5 @@
 import { Event } from './event.class.js';
-import EventType, { EventOpts } from './event.type';
+import { EventOpts } from './event.type';
 import { EventQueue } from './eventQueue.class.js';
 import { MessageEvent } from './message.event.class.js';
 
@@ -35,7 +35,7 @@ export class DialogueEvent extends Event {
 
         return (
             new Promise(async resolve => {
-                await new EventQueue ({
+                new EventQueue ({
                     events: DialogueEvents,
                     onDone: () => { // called when all nested DialogueEvents finish
                         return setTimeout(resolve, 0);

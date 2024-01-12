@@ -1,5 +1,5 @@
 import { Event } from './event.class.js';
-import EventType, { EventOpts } from './event.type';
+import { EventOpts } from './event.type';
 
 export class ClearAreaEvent extends Event {
     constructor (ClearAreaOpts?: EventOpts<"clearArea">) {
@@ -17,8 +17,6 @@ export class ClearAreaEvent extends Event {
             }
         }
 
-        const wrapper = super.wrapperHTML();
-
         const eventArea = super.getEventArea();
         if (eventArea) {
             eventArea.innerHTML = '';
@@ -26,7 +24,7 @@ export class ClearAreaEvent extends Event {
 
         return (
             new Promise(async resolve => {
-                await setTimeout(resolve, 0);
+                setTimeout(resolve, 0);
                 return resolve;
             })
         );

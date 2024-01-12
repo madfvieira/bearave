@@ -5,16 +5,11 @@
  */
 
 import { Floor } from './floor.class.js';
-import { Room } from './room.class.js';
-import { Bear } from './bear.class.js';
 import { Hunter } from './hunter.class.js';
 import { Level } from './level.class.js';
 import { MessageEvent } from './message.event.class.js';
 import { DelayEvent } from './delay.event.class.js';
-import { DialogueEvent } from './dialogue.event.class.js';
-import { PromptEvent } from './prompt.event.class.js';
 import { ClearAreaEvent } from './clearArea.event.class.js';
-import { Dialogue } from './dialogue.class.js';
 
 const initialize = () => {
     const appElem = document.getElementById('app');
@@ -45,13 +40,13 @@ const initialize = () => {
     );
 
     const level1 = new Level({
-        'id': 1,
         'floor': floor1,
         'htmlAnchor': appElem,
     });
 
     const level1Init = () => {
-        level1.setHunter(new Hunter({ 'healthPoints': 100}));
+        level1.setHunter(new Hunter());
+
         level1.addRoomEvents({
             'roomId': '4_3',
             'events': [
@@ -72,20 +67,6 @@ const initialize = () => {
                     },
                 }),
 
-                //new DialogueEvent({
-                //    'dialogs': [
-                //        new Dialogue({
-                //            'message': "!",
-                //            'entity': "Cave",
-                //            'duration': 1000,
-                //        }),
-                //    ],
-                //    'onDone' : () => { level1.floodFloor() },
-                //}),
-                //new MessageEvent({
-                //    'message' : "Mind the puddles!",
-                //    'duration': 3600,
-                //}),
                 new ClearAreaEvent(),
             ],
         });
@@ -98,25 +79,10 @@ const initialize = () => {
                     'onDone': () => {
                         level1.destroy();
                         level2.initialise(() => {
-                            console.log('init level2')
                             level2Init();
                         });
                     },
                 })
-                //new PromptEvent({
-                //    'question': "Success! Continue to next level?",
-                //    'choices': [
-                //        {
-                //            id: "choice_0",
-                //            label: "Yes",
-                //            onPick: () => {
-                //                console.log('you have picked me')
-                //                level1.destroy();
-                //            }
-                //        },
-                //        { id: "choice_1", label: "No", onPick: () => {}},
-                //    ],
-                //}),
             ]
         });
 
@@ -152,13 +118,12 @@ const initialize = () => {
 
 
     const level2 = new Level({
-        'id': 1,
         'floor': floor2,
         'htmlAnchor': appElem,
     });
 
     const level2Init = () => {
-        level2.setHunter(new Hunter({ 'healthPoints': 100}));
+        level2.setHunter(new Hunter());
         level2.addRoomEvents({
             'roomId': '5_1',
             'events': [
@@ -179,35 +144,8 @@ const initialize = () => {
                     },
                 }),
 
-                //new DialogueEvent({
-                //    'dialogs': [
-                //        new Dialogue({
-                //            'message': "!",
-                //            'entity': "Cave",
-                //            'duration': 1000,
-                //        }),
-                //    ],
-                //    'onDone' : () => { level2.floodFloor() },
-                //}),
-                //new MessageEvent({
-                //    'message' : "Mind the puddles!",
-                //    'duration': 3600,
-                //}),
                 new ClearAreaEvent(),
             ],
-        });
-
-        level2.addRoomEvents({
-            'roomId': '10_14',
-            'events': [
-                new PromptEvent({
-                    'question': "Success! Continue to next level?",
-                    'choices': [
-                        { id: "choice_0", label: "Yes", onPick: () => { console.log('you have picked me')}},
-                        { id: "choice_1", label: "No", onPick: () => {}},
-                    ],
-                }),
-            ]
         });
 
         level2.placeBear('1_1');

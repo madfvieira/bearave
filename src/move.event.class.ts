@@ -1,5 +1,5 @@
 import { Event } from './event.class.js';
-import EventType, { EventOpts } from './event.type';
+import { EventOpts } from './event.type';
 
 export class MoveEvent extends Event {
     constructor (MoveOpts : EventOpts<"move">) {
@@ -29,7 +29,7 @@ export class MoveEvent extends Event {
 
         return (
             new Promise(async resolve => {
-                await setTimeout(resolve, 0);
+                setTimeout(resolve, 0);
                 return resolve;
             })
         );

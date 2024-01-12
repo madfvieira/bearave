@@ -1,5 +1,4 @@
 import { Event } from './event.class.js';
-import EventType from './event.type';
 
 interface eventQueueOpts {
     events: Event[],
@@ -27,13 +26,11 @@ export class EventQueue {
     async processQueue() : Promise<void> {
         for (let i = 0; i < this.events.length; i++) {
             if (!this.canProcessQueue) {
-                console.log('breaking event queues')
                 break;
             }
             await this.playEvent({
                 event: this.events[i]
             });
-            console.log('to next event')
         }
     };
 

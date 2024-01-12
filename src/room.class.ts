@@ -1,6 +1,4 @@
 import { Event } from './event.class';
-import { Bear } from './bear.class.js';
-import { Hunter } from './hunter.class.js';
 import { Unit } from './unit.class.js';
 import RoomPosition from 'roomPosition.interface';
 
