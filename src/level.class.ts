@@ -290,22 +290,23 @@ export class Level {
         })[0];
 
         if (!this?.bear) {
-            this.bear = new Bear(); this.bear.setControls([
+            this.bear = new Bear();
+            this.bear.setControls([
                 {
                     "action": { "move" : "up" },
-                    "keyCode": 38,
+                    "key": "w",
                 },
                 {
                     "action": { "move" : "right" },
-                    "keyCode": 39,
+                    "key": "d",
                 },
                 {
                     "action": { "move" : "down" },
-                    "keyCode": 40,
+                    "key": "s",
                 },
                 {
                     "action": { "move" : "left" },
-                    "keyCode": 37,
+                    "key": "a",
                 },
             ]);
             this.bear.allowMovement();
@@ -318,7 +319,7 @@ export class Level {
                 const bearControls = this.bear.getControls();
                 for (let i = 0; i < bearControls.length ; i++) {
                     const bearControl = bearControls[i];
-                    if (event.keyCode == bearControl.keyCode) {
+                    if (event.key == bearControl.key) {
                         if (bearControl.action.move) {
                             this.moveBear(bearControl.action.move);
                         }

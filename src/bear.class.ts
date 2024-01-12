@@ -1,7 +1,7 @@
 import { Unit } from './unit.class.js';
 import { ActionType } from './action.type.js';
 
-type KeyboardControl = { "action": ActionType, "keyCode" : number};
+type KeyboardControl = { "action": ActionType, "key" : string};
 type KeyboardControls = KeyboardControl[];
 
 export class Bear extends Unit {
