@@ -9,6 +9,8 @@ import { Bear } from './bear.class.js';
 import { Hunter } from './hunter.class.js';
 import RoomAdjacentPositions from './roomAdjacentPositions.interface';
 
+type Speed = number;
+
 /*
 * Class Level can be used as a top level controller for generating playable
   levels, containing units, rooms, events, etc
@@ -184,7 +186,7 @@ export class Level {
         return true;
     };
 
-    moveHunterAcrossMaze () {
+    moveHunterAcrossMaze (speed: Speed = 1) {
         const roomsToVisit = this.floor.createRoute();
 
         const travelRouteEvents = [];
@@ -198,7 +200,7 @@ export class Level {
             const roomToVisit = roomsToVisit[i];
 
             travelRouteEvents.push(
-                new DelayEvent({ duration: 1000 }),
+                new DelayEvent({ duration: 1000 / speed }),
                 new MoveEvent({
                     unit: thisHunter,
                     room: roomToVisit,
