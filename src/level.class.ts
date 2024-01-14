@@ -335,7 +335,7 @@ export class Level {
 
         bearNewRoom.addUnit(this.bear);
 
-        document.onkeydown = (event) => {
+        document.onkeyup = (event) => {
             if (this.bear) {
                 const bearControls = this.bear.getControls();
                 for (let i = 0; i < bearControls.length ; i++) {
