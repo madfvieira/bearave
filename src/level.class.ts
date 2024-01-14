@@ -29,11 +29,25 @@ export class Level {
     private hunter?: Hunter;
     private eventQueueStash: EventQueue[];
 
+    private initProps: {
+        floor: LevelType["floor"],
+        htmlAnchor: LevelType["htmlAnchor"],
+        eventQueueStash: EventQueue[],
+        setupFunc: () => void,
+    };
+
     constructor(levelOpts: LevelType) {
         this.floor = levelOpts.floor;
         this.htmlAnchor = levelOpts.htmlAnchor;
 
         this.eventQueueStash = [];
+
+        this.initProps = {
+            floor: this.floor,
+            htmlAnchor: this.htmlAnchor,
+            eventQueueStash: this.eventQueueStash,
+            setupFunc: () => {},
+        };
     };
 
     setHtmlAnchor (htmlElem: HTMLElement) {
@@ -190,6 +204,11 @@ export class Level {
                     room: roomToVisit,
                     level: this,
                     onDone: () => {
+                        if (roomToVisit.hasUnitId('bear')) {
+                            // hunter unit has caught up to the bear, level resets
+                            this.reset();
+                            return;
+                        }
                         this.renderLevel();
                     },
                 })
@@ -458,7 +477,14 @@ export class Level {
         this.floor.setRooms(
             this.floor.constructRoomsFromMatrix(this.floor.getLayout().matrix)
         );
+
+        this.initProps.setupFunc = setupFunc;
         setupFunc();
+    };
+
+    reset() : void {
+        this.destroy();
+        this.initialise(this.initProps.setupFunc);
     };
 
     destroy() {
