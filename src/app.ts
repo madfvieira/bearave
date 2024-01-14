@@ -64,7 +64,7 @@ const initialize = () => {
                     'onDone'  : () => {
                         level1.placeHunter('1_4');
                         level1.renderLevel();
-                        level1.moveHunterAcrossMaze();
+                        level1.moveHunterAcrossMaze(2);
                     },
                     'criteriaCheck': () => {
                         const bearRoom = level1.getBearRoom();
@@ -141,7 +141,7 @@ const initialize = () => {
                     'onDone'  : () => {
                         level2.placeHunter('1_1');
                         level2.renderLevel();
-                        level2.moveHunterAcrossMaze();
+                        level2.moveHunterAcrossMaze(4);
                     },
                     'criteriaCheck': () => {
                         const bearRoom = level2.getBearRoom();
@@ -213,7 +213,7 @@ const initialize = () => {
                     'onDone'  : () => {
                         level3.placeHunter('1_1');
                         level3.renderLevel();
-                        level3.moveHunterAcrossMaze();
+                        level3.moveHunterAcrossMaze(5);
                     },
                     'criteriaCheck': () => {
                         const bearRoom = level3.getBearRoom();
