@@ -155,9 +155,94 @@ const initialize = () => {
                 new ClearAreaEvent(),
             ],
         });
+        level2.addRoomEvents({
+            'roomId': '10_14',
+            'events': [
+                new DelayEvent({
+                    'duration': 0,
+                    'onDone': () => {
+                        level2.destroy();
+                        level3.initialise(() => {
+                            level3Init();
+                        });
+                    },
+                })
+            ]
+        });
 
         level2.placeBear('1_1');
         level2.renderLevel();
+    };
+
+
+    const floor3 = new Floor(
+        {
+            'id': 3,
+            'layout': {
+                'matrix': [
+                    '----------------', // 0
+                    '|       000   0|', // 1
+                    '|000000 0 0 0 0|', // 2
+                    '|       0   0 0|', // 3
+                    '| 0000000 0 0 0|', // 4
+                    '|     000 0 0 0|', // 5
+                    '|0000 000 0 0 0|', // 6
+                    '|   0 000  00 0|', // 7
+                    '| 0   0   000 0|', // 8
+                    '| 00000 000 0 0|', // 9
+                    '|       0   0  |', // 10
+                    '----------------',
+                ],
+            },
+        }
+    );
+
+    const level3 = new Level({
+        'floor': floor3,
+        'htmlAnchor': appElem,
+    });
+
+    const level3Init = () => {
+        level3.setHunter(new Hunter());
+        level3.addRoomEvents({
+            'roomId': '1_5',
+            'events': [
+                new MessageEvent({
+                    'message' : "Sniff*sniff*... a hunter is entering the cave",
+                    'duration': 600,
+                    'onDone'  : () => {
+                        level3.placeHunter('1_1');
+                        level3.renderLevel();
+                        level3.moveHunterAcrossMaze();
+                    },
+                    'criteriaCheck': () => {
+                        const bearRoom = level3.getBearRoom();
+                        if (bearRoom) {
+                            return bearRoom.getId() === '4_3';
+                        }
+                        return false;
+                    },
+                }),
+
+                new ClearAreaEvent(),
+            ],
+        });
+
+        level3.addRoomEvents({
+            'roomId': '10_14',
+            'events': [
+                new DelayEvent({
+                    duration: 0,
+                    onDone: () => {
+                        alert('You win!');
+                        level3.destroy();
+                    },
+                })
+            ],
+        });
+
+        level3.placeBear('1_1');
+        level3.renderLevel();
     };
 };
 
