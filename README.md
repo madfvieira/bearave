@@ -14,6 +14,10 @@ Contributions are welcome!
 ## History
 I've started work on this in Oct 2023.
 
+## Setup Instructions
+
+"All" node versions should work.  I've developed most of it in node v17.0.1
+
 ### setup repo steps
 1. git clone {repo}
 2. npm install
