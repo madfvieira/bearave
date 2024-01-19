@@ -5,6 +5,7 @@ mazes before the bad computer balls catches you.
 ## Roadmap
  • improve traversing algorithm
  • overall reduce tech-debt, refactoring
+ • improve collision check logic
  • ...
 
 ## Contributing
