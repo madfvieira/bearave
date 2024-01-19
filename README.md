@@ -26,3 +26,6 @@ I've started work on this in Oct 2023.
 
 ### spin up with local server and TypeScript watcher
 1. npm run start
+
+### compile TS and do a build
+1. npm run build
