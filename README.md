@@ -2,6 +2,8 @@
 Bearave is a simple game where you must lead your player ball through
 mazes before the bad computer balls catches you.
 
+You can see it [in action here](https://apps.mafv.co.uk/bearave/).
+
 ## Roadmap
  - improve traversing algorithm
  - overall reduce tech-debt, refactoring
