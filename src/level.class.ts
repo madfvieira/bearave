@@ -19,8 +19,8 @@ type Speed = number;
 * @param {htmlAnchor|HTMLElement} html element where the level is generated
 * @param {bear|Bear} optional Bear unit
 * @param {hunter|Hunter} optional Hunter unit
-* @param {eventQueueStash|EventQueue[]} stash of EventQueue controllers which holds
-*        allows us to oversee any event queue and by extension any event that this
+* @param {eventQueueStash|EventQueue[]} stash of EventQueue controllers which
+*        allows to oversee any event queue and by extension any event that this
 *        level triggers/creates.
 *        NB: any eventQueue/events should be pushed into this stash
 */
