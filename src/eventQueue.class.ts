@@ -3,19 +3,16 @@ import { Event } from './event.class.js';
 interface eventQueueOpts {
     events: Event[],
     onDone: () => void,
-    eventArea: HTMLElement,
 };
 
 export class EventQueue {
     private events: eventQueueOpts["events"];
     private onDone: eventQueueOpts["onDone"];
-    private eventArea: eventQueueOpts["eventArea"];
     private canProcessQueue: boolean;
 
     constructor (opts: eventQueueOpts) {
         this.events = opts.events;
         this.onDone = opts.onDone;
-        this.eventArea = opts.eventArea;
         this.canProcessQueue = true;
 
         this.processQueue().then(() => {
@@ -43,7 +40,6 @@ export class EventQueue {
             if (!this.canProcessQueue) {
                 return setTimeout(resolve, 0);
             }
-            playOpts.event.setEventArea(this.eventArea);
             await playOpts.event.execution();
             playOpts.event.onDone();
 

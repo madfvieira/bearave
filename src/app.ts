@@ -7,9 +7,7 @@
 import { Floor } from './floor.class.js';
 import { Hunter } from './hunter.class.js';
 import { Level } from './level.class.js';
-import { MessageEvent } from './message.event.class.js';
 import { DelayEvent } from './delay.event.class.js';
-import { ClearAreaEvent } from './clearArea.event.class.js';
 
 const initialize = () => {
     const appElem = document.getElementById('app');
@@ -58,24 +56,14 @@ const initialize = () => {
         level1.addRoomEvents({
             'roomId': '4_3',
             'events': [
-                new MessageEvent({
-                    'message' : "Sniff*sniff*... a hunter is entering the cave",
-                    'duration': 2600,
+                new DelayEvent({
+                    'duration': 0,
                     'onDone'  : () => {
                         level1.placeHunter('1_4');
                         level1.renderLevel();
                         level1.moveHunterAcrossMaze(2);
                     },
-                    'criteriaCheck': () => {
-                        const bearRoom = level1.getBearRoom();
-                        if (bearRoom) {
-                            return bearRoom.getId() === '4_3';
-                        }
-                        return false;
-                    },
                 }),
-
-                new ClearAreaEvent(),
             ],
         });
 
@@ -135,24 +123,14 @@ const initialize = () => {
         level2.addRoomEvents({
             'roomId': '5_1',
             'events': [
-                new MessageEvent({
-                    'message' : "Sniff*sniff*... a hunter is entering the cave",
-                    'duration': 600,
+                new DelayEvent({
+                    'duration': 0,
                     'onDone'  : () => {
                         level2.placeHunter('1_1');
                         level2.renderLevel();
                         level2.moveHunterAcrossMaze(4);
                     },
-                    'criteriaCheck': () => {
-                        const bearRoom = level2.getBearRoom();
-                        if (bearRoom) {
-                            return bearRoom.getId() === '4_3';
-                        }
-                        return false;
-                    },
                 }),
-
-                new ClearAreaEvent(),
             ],
         });
         level2.addRoomEvents({
@@ -207,24 +185,14 @@ const initialize = () => {
         level3.addRoomEvents({
             'roomId': '1_5',
             'events': [
-                new MessageEvent({
-                    'message' : "Sniff*sniff*... a hunter is entering the cave",
-                    'duration': 600,
-                    'onDone'  : () => {
+                new DelayEvent({
+                    'duration': 0,
+                    'onDone': () => {
                         level3.placeHunter('1_1');
                         level3.renderLevel();
                         level3.moveHunterAcrossMaze(5);
                     },
-                    'criteriaCheck': () => {
-                        const bearRoom = level3.getBearRoom();
-                        if (bearRoom) {
-                            return bearRoom.getId() === '4_3';
-                        }
-                        return false;
-                    },
                 }),
-
-                new ClearAreaEvent(),
             ],
         });
 

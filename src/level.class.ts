@@ -104,33 +104,11 @@ export class Level {
         this.floor.renderHTML(mapArea);
     };
 
-    getEventAreaElem() : HTMLElement | null {
-        return document.getElementById('eventsArea');
-    };
-
-    renderEventArea() : void {
-        const eventsArea = document.createElement('DIV');
-        eventsArea.setAttribute('id', 'eventsArea');
-        eventsArea.setAttribute('style', `
-            background: #000000;
-            color: #ffffff;
-            border: 3px solid grey;
-            width: 666px;
-            height: 360px;
-            font-size: 22px;
-            padding: 1em;
-            box-sizing: border-box;
-        `);
-
-        this.htmlAnchor.appendChild(eventsArea);
-    };
-
     renderLevel() {
         if (this.htmlAnchor) {
             this.htmlAnchor.innerHTML = '';
 
             this.renderMapArea();
-            this.renderEventArea();
         }
     };
 
@@ -217,18 +195,11 @@ export class Level {
             );
         }
 
-        const eventAreaElem = this.getEventAreaElem();
-
-        if (eventAreaElem == null) {
-            return false;
-        }
-
         const eventQueueMoveHunterAcrossMaze = new EventQueue ({
             events: travelRouteEvents,
             onDone: () => {
                 this.removeFromEventQueueStash(eventQueueMoveHunterAcrossMaze);
             },
-            eventArea: eventAreaElem,
         });
 
         this.eventQueueStash.push(eventQueueMoveHunterAcrossMaze);
@@ -364,12 +335,6 @@ export class Level {
             return false;
         }
 
-        const eventAreaElem = this.getEventAreaElem();
-
-        if (eventAreaElem == null) {
-            return false;
-        }
-
         bearInRoom.disallowMovement();
 
         const eventQueueRoomEvents = new EventQueue ({
@@ -379,7 +344,6 @@ export class Level {
                 room.removeEvents();
                 this.removeFromEventQueueStash(eventQueueRoomEvents);
             },
-            eventArea: eventAreaElem,
         });
 
         return true;
@@ -435,12 +399,6 @@ export class Level {
                 return false;
             }
 
-            const eventAreaElem = this.getEventAreaElem();
-
-            if (eventAreaElem == null) {
-                return false;
-            }
-
             const eventQueueMoveBearEvent = new EventQueue ({
                 events: [
                     new MoveEvent({
@@ -457,7 +415,6 @@ export class Level {
                         this.playRoomEvents(bearRoomTarget);
                     }
                 },
-                eventArea: eventAreaElem,
             });
 
             return true;

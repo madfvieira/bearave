@@ -2,7 +2,6 @@ import EventType from './event.type';
 
 export abstract class Event {
     private opts: EventType["opts"];
-    protected eventArea?: HTMLElement;
 
     constructor (eventOpts: EventType) {
         this.opts = eventOpts.opts;
@@ -17,14 +16,6 @@ export abstract class Event {
         wrapper.setAttribute('id', 'eventWrapper');
         wrapper.setAttribute('style', 'color:white;');
         return wrapper;
-    };
-
-    setEventArea(eventArea : HTMLElement) : void {
-        this.eventArea = eventArea;
-    };
-
-    getEventArea() : HTMLElement | undefined {
-        return this.eventArea;
     };
 
     onDone() : void {
