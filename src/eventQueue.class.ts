@@ -1,23 +1,38 @@
 import { Event } from './event.class.js';
 
+type EventSubscriber = {
+    notifyMe: (event: Event) => void,
+};
+
 interface eventQueueOpts {
     events: Event[],
     onDone: () => void,
+    eventsSubscriber?: EventSubscriber,
 };
 
 export class EventQueue {
     private events: eventQueueOpts["events"];
     private onDone: eventQueueOpts["onDone"];
     private canProcessQueue: boolean;
+    private eventsSubscriber?: EventSubscriber;
 
     constructor (opts: eventQueueOpts) {
         this.events = opts.events;
         this.onDone = opts.onDone;
         this.canProcessQueue = true;
+        if (opts.eventsSubscriber) {
+            this.eventsSubscriber = opts.eventsSubscriber;
+        }
 
         this.processQueue().then(() => {
             this.onDone();
         });
+    };
+
+    notifyAll(eventDone : Event): void{
+        if (this.eventsSubscriber) {
+            this.eventsSubscriber.notifyMe(eventDone);
+        }
     };
 
     async processQueue() : Promise<void> {
@@ -28,6 +43,8 @@ export class EventQueue {
             await this.playEvent({
                 event: this.events[i]
             });
+
+            this.notifyAll(this.events[i]);
         }
     };
 

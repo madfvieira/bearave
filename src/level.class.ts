@@ -164,6 +164,15 @@ export class Level {
         return true;
     };
 
+    isCollision() : boolean {
+        const bearRoom = this.getBearRoom();
+        const hunterRoom = this.getHunterRoom();
+        if (bearRoom?.getId() === hunterRoom?.getId()) {
+            return true;
+        }
+        return false;
+    };
+
     moveHunterAcrossMaze (speed: Speed = 1) {
         const roomsToVisit = this.floor.createRoute();
 
@@ -184,11 +193,6 @@ export class Level {
                     room: roomToVisit,
                     level: this,
                     onDone: () => {
-                        if (roomToVisit.hasUnitId('bear')) {
-                            // hunter unit has caught up to the bear, level resets
-                            this.reset();
-                            return;
-                        }
                         this.renderLevel();
                     },
                 })
@@ -199,6 +203,16 @@ export class Level {
             events: travelRouteEvents,
             onDone: () => {
                 this.removeFromEventQueueStash(eventQueueMoveHunterAcrossMaze);
+            },
+            eventsSubscriber: {
+                notifyMe: (event) => {
+                    if (this.isCollision()) {
+                        // hunter unit has caught up to the bear, level resets
+                        this.reset();
+                        this.renderLevel();
+
+                    }
+                }
             },
         });
 
@@ -415,6 +429,16 @@ export class Level {
                         this.playRoomEvents(bearRoomTarget);
                     }
                 },
+                eventsSubscriber: {
+                    notifyMe: (event) => {
+                        if (this.isCollision()) {
+                            // bear unit moved into the hunter location, level resets
+                            this.reset();
+                            this.renderLevel();
+                        }
+                    }
+                },
+
             });
 
             return true;
