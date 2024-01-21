@@ -11,13 +11,6 @@ export abstract class Event {
         return this.opts;
     };
 
-    protected wrapperHTML() : HTMLElement {
-        const wrapper = document.createElement('DIV');
-        wrapper.setAttribute('id', 'eventWrapper');
-        wrapper.setAttribute('style', 'color:white;');
-        return wrapper;
-    };
-
     onDone() : void {
         if (typeof(this.opts?.onDone) === 'function') {
             this.opts.onDone();
