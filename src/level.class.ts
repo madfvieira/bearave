@@ -64,13 +64,6 @@ export class Level {
         delete this.hunter;
     };
 
-    getHunter () : Hunter | null {
-        if (this?.hunter) {
-            return this.hunter;
-        }
-        return null;
-    };
-
     getEventQueueStash () : EventQueue[] {
         return this.eventQueueStash;
     };
