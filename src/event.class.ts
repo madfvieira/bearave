@@ -18,5 +18,4 @@ export abstract class Event {
     };
 
     abstract execution() : void;
-
 };
